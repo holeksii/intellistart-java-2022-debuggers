@@ -8,7 +8,7 @@
 		<version>2.7.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>ua.intellias.intellistart</groupId>
+	<groupId>com.intellias.intellistart</groupId>
 	<artifactId>interview-planning</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>interview-planning</name>
@@ -84,6 +84,38 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Checkstyle -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<configLocation>checkstyle.xml</configLocation>
+					<encoding>UTF-8</encoding>
+					<consoleOutput>true</consoleOutput>
+					<failsOnError>true</failsOnError>
+					<failOnViolation>true</failOnViolation>
+					<violationSeverity>warning</violationSeverity>
+					<linkXRef>false</linkXRef>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>10.3.4</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
