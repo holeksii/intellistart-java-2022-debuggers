@@ -39,27 +39,13 @@ public class InterviewerTimeSlotForm {
     private LocalTime to;
     private int weekNum;
 
-    /**
-     * Builder start time of slot.
-     *
-     * @param from start time of slot
-     * @return builder
-     */
     public TimeSlotFormBuilder from(String from) {
-      String[] fromStrings = from.split(":");
-      this.from = LocalTime.of(Integer.parseInt(fromStrings[0]), Integer.parseInt(fromStrings[1]));
+      this.from = LocalTime.parse(from);
       return this;
     }
 
-    /**
-     * Builder end time.
-     *
-     * @param to end time of clot
-     * @return builder
-     */
     public TimeSlotFormBuilder to(String to) {
-      String[] toStrings = to.split(":");
-      this.to = LocalTime.of(Integer.parseInt(toStrings[0]), Integer.parseInt(toStrings[1]));
+      this.to = LocalTime.parse(to);
       return this;
     }
 
