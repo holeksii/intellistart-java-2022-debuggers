@@ -29,8 +29,7 @@ public class BookingService {
   public Booking createBooking(InterviewerTimeSlot candidateSlot,
                                InterviewerTimeSlot interviewerSlot) {
     //Todo calculate possible time
-    //return bookingRepository.save(new Booking(candidateSlot, interviewerSlot));
-    return new Booking();
+    return bookingRepository.save(new Booking(candidateSlot, interviewerSlot));
   }
 
 
@@ -39,8 +38,7 @@ public class BookingService {
   }
 
   public Booking getBooking(Long id) {
-    //return bookingRepository.getReferenceById(id);
-    return new Booking();
+    return bookingRepository.getReferenceById(id);
   }
 
   public void removeBooking(Long id) {

@@ -1,22 +1,30 @@
 package com.intellias.intellistart.interviewplanning.models;
 
 import java.time.LocalTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import lombok.Data;
 
 /**
  * Booking.
- *
  */
 @Entity
 @Data
 public class Booking {
 
   @Id
+  @SequenceGenerator(name = "booking_seq", sequenceName = "booking_sequence", allocationSize = 5)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "booking_seq")
+  @Column(nullable = false)
   private Long id;
+  @Column(name = "from_time")
   private LocalTime from;
+  @Column(name = "to_time")
   private LocalTime to;
   private BookingStatus status;
   @ManyToOne
