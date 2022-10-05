@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository;
  * Save users.
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
-
-
+public interface UserRepository extends JpaRepository<User, Long> {
 }

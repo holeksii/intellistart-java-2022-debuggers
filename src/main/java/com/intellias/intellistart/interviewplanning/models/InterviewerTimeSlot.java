@@ -2,6 +2,7 @@ package com.intellias.intellistart.interviewplanning.models;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import lombok.Data;
@@ -11,12 +12,13 @@ import lombok.Data;
  */
 @Entity
 @Data
-
 public class InterviewerTimeSlot {
 
   @Id
   private Long id;
+  @Column(name = "from_time")
   private LocalTime from;
+  @Column(name = "to_time")
   private LocalTime to;
   private DayOfWeek dayOfWeek;
   private int weekNum;

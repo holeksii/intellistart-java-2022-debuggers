@@ -24,20 +24,18 @@ public class UserService {
   }
 
   public User createUser(String email) {
-    //return userRepository.save(new User(email, UserRole.CANDIDATE));
-    return new User();
+    return userRepository.save(new User(email, UserRole.CANDIDATE));
   }
 
   public User saveUser(User user) {
     return userRepository.save(user);
   }
 
-  public User getUser(String id) {
-    //return userRepository.getReferenceById(id);
-    return new User();
+  public User getUser(Long id) {
+    return userRepository.getReferenceById(id);
   }
 
-  public void removeUser(String id) {
+  public void removeUser(Long id) {
     userRepository.deleteById(id);
   }
 
