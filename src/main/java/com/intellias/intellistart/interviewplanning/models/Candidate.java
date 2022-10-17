@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Entity;
@@ -12,8 +13,10 @@ import javax.persistence.OneToMany;
 public class Candidate extends User {
 
   @OneToMany
+  @JsonIgnore
   private Set<CandidateTimeSlot> timeSlots;
   @OneToMany
+  @JsonIgnore
   private Set<Booking> bookings;
 
   /**
@@ -37,6 +40,7 @@ public class Candidate extends User {
     bookings.add(booking);
   }
 
+  @JsonIgnore
   public Set<CandidateTimeSlot> getSlots() {
     return new HashSet<>(timeSlots);
   }
