@@ -1,13 +1,9 @@
 package com.intellias.intellistart.interviewplanning.services;
 
 import com.intellias.intellistart.interviewplanning.exceptions.CoordinatorNotFoundException;
-import com.intellias.intellistart.interviewplanning.models.Candidate;
-import com.intellias.intellistart.interviewplanning.models.Interviewer;
 import com.intellias.intellistart.interviewplanning.models.User;
 import com.intellias.intellistart.interviewplanning.models.User.UserRole;
-import com.intellias.intellistart.interviewplanning.repositories.CandidateRepository;
-import com.intellias.intellistart.interviewplanning.repositories.CoordinatorRepository;
-import com.intellias.intellistart.interviewplanning.repositories.InterviewerRepository;
+import com.intellias.intellistart.interviewplanning.repositories.UserRepository;
 import javax.persistence.EntityNotFoundException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-  private final CoordinatorRepository coordinatorRepository;
-  private final InterviewerRepository interviewerRepository;
-  private final CandidateRepository candidateRepository;
+  private final UserRepository userRepository;
 
-  /**
-   * Main constructor.
-   *
-   * @param coordinatorRepository coordinatorRepository to inject into service
-   * @param interviewerRepository interviewerRepository to inject into service
-   * @param candidateRepository   candidateRepository to inject into service
-   */
   @Autowired
-  public UserService(CoordinatorRepository coordinatorRepository,
-      InterviewerRepository interviewerRepository,
-      CandidateRepository candidateRepository) {
-    this.coordinatorRepository = coordinatorRepository;
-    this.interviewerRepository = interviewerRepository;
-    this.candidateRepository = candidateRepository;
+  public UserService(UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
   /**
@@ -47,33 +30,13 @@ public class UserService {
    * @return user with generated id
    */
   public User create(String email, UserRole role) {
-    switch (role) {
-      case INTERVIEWER:
-        return interviewerRepository.save(new Interviewer(email));
-      case COORDINATOR:
-        return coordinatorRepository.save(new User(email, role));
-      case CANDIDATE:
-        return candidateRepository.save(new Candidate(email));
-      default:
-        throw new IllegalArgumentException("Illegal role");
-    }
+    return userRepository.save(new User(email, role));
   }
 
-  public Candidate create(String email) {
-    return candidateRepository.save(new Candidate(email));
+  public User save(User user) {
+    return userRepository.save(user);
   }
 
-  public User save(User coordinator) {
-    return coordinatorRepository.save(coordinator);
-  }
-
-  public User save(Interviewer interviewer) {
-    return interviewerRepository.save(interviewer);
-  }
-
-  public User save(Candidate candidate) {
-    return candidateRepository.save(candidate);
-  }
 
   /**
    * Returns a user of given id or generates an ApplicationErrorException if none found.
@@ -83,7 +46,7 @@ public class UserService {
    */
   public User getCoordinatorById(Long id) {
     try {
-      return (User) Hibernate.unproxy(coordinatorRepository.getReferenceById(id));
+      return (User) Hibernate.unproxy(userRepository.getReferenceById(id));
     } catch (EntityNotFoundException e) {
       throw new CoordinatorNotFoundException(id);
     }
@@ -96,7 +59,7 @@ public class UserService {
    */
   public void removeCoordinatorById(Long id) {
     try {
-      coordinatorRepository.deleteById(id);
+      userRepository.deleteById(id);
     } catch (EntityNotFoundException e) {
       throw new CoordinatorNotFoundException(id);
     }

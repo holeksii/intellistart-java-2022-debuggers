@@ -1,14 +1,13 @@
 package com.intellias.intellistart.interviewplanning.repositories;
 
-
-import com.intellias.intellistart.interviewplanning.models.Interviewer;
+import com.intellias.intellistart.interviewplanning.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Interviewer repository.
+ * Save users.
  */
 @Repository
-public interface InterviewerRepository extends JpaRepository<Interviewer, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
 }
