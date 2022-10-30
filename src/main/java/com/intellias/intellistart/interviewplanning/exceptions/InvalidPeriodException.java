@@ -13,7 +13,7 @@ public class InvalidPeriodException extends ApplicationErrorException {
    * @param errorMessage error message
    */
   public InvalidPeriodException(String errorMessage) {
-    super(ErrorCode.INVALID_PERIOD, errorMessage);
+    super(ErrorCode.INVALID_BOUNDARIES, errorMessage);
   }
 
   /**
