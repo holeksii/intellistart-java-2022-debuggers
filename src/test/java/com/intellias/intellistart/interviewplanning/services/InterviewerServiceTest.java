@@ -5,8 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.intellias.intellistart.interviewplanning.exceptions.CreateSlotNotAllowedException;
-import com.intellias.intellistart.interviewplanning.exceptions.UpdateSlotNotAllowedException;
+import com.intellias.intellistart.interviewplanning.exceptions.ApplicationErrorException;
 import com.intellias.intellistart.interviewplanning.exceptions.InterviewerNotFoundException;
 import com.intellias.intellistart.interviewplanning.models.InterviewerTimeSlot;
 import com.intellias.intellistart.interviewplanning.models.User;
@@ -63,7 +62,7 @@ class InterviewerServiceTest {
       InterviewerTimeSlot createdSlot = interviewerService.createSlot(1L, timeSlot);
       assertEquals(timeSlot, createdSlot);
     } else {
-      assertThrows(CreateSlotNotAllowedException.class,
+      assertThrows(ApplicationErrorException.class,
           () -> interviewerService.createSlot(1L, timeSlot));
     }
   }
@@ -117,7 +116,7 @@ class InterviewerServiceTest {
       assertEquals(timeSlot.getDayOfWeek(), slot.getDayOfWeek());
       assertEquals(timeSlot.getWeekNum(), slot.getWeekNum());
     } else {
-      assertThrows(UpdateSlotNotAllowedException.class,
+      assertThrows(ApplicationErrorException.class,
           () -> interviewerService.updateSlot(1L, 1L, timeSlot));
     }
 
