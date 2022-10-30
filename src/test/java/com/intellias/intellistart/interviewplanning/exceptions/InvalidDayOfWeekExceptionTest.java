@@ -8,28 +8,28 @@ import org.junit.jupiter.api.Test;
 
 class InvalidDayOfWeekExceptionTest {
 
-  private static InvalidDayOfWeekException exception;
+  private static InvalidBoundariesException exception;
 
   @Test
   void testConstructorString() {
-    exception = new InvalidDayOfWeekException("test");
+    exception = new InvalidBoundariesException("test");
     try {
       throw exception;
-    } catch (InvalidDayOfWeekException e) {
+    } catch (InvalidBoundariesException e) {
       assertEquals("test", e.getMessage());
-      assertEquals(ErrorCode.INVALID_DAY_OF_WEEK.code, e.getErrorCode());
+      assertEquals(ErrorCode.INVALID_BOUNDARIES.code, e.getErrorCode());
     }
   }
 
   @Test
   void testConstructorLong() {
-    exception = new InvalidDayOfWeekException(DayOfWeek.FRIDAY);
+    exception = new InvalidBoundariesException(DayOfWeek.FRIDAY);
     try {
       throw exception;
-    } catch (InvalidDayOfWeekException e) {
+    } catch (InvalidBoundariesException e) {
       assertEquals(ErrorCode.INVALID_DAY_OF_WEEK.code, e.getErrorCode());
       assertEquals(
-          String.format(InvalidDayOfWeekException.ERROR_MESSAGE, DayOfWeek.FRIDAY),
+          String.format(InvalidBoundariesException.DAY_OF_WEEK_ERROR_MESSAGE, DayOfWeek.FRIDAY),
           e.getMessage());
     }
   }
