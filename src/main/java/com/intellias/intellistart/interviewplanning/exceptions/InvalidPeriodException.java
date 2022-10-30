@@ -5,6 +5,8 @@ package com.intellias.intellistart.interviewplanning.exceptions;
  */
 public class InvalidPeriodException extends ApplicationErrorException {
 
+  public static final String ERROR_MESSAGE = "Invalid period: %s - %s";
+
   /**
    * constructor.
    *
@@ -21,6 +23,7 @@ public class InvalidPeriodException extends ApplicationErrorException {
    * @param to   end time
    */
   public InvalidPeriodException(String from, String to) {
-    this("Invalid period: " + from + " - " + to);
+    this(String.format(ERROR_MESSAGE, from, to));
   }
+
 }
