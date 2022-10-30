@@ -55,7 +55,7 @@ public class ApplicationErrorException extends RuntimeException {
     INVALID_BOUNDARIES(HttpStatus.BAD_REQUEST, "invalid_boundaries"),
     CANNOT_EDIT_THIS_WEEK(HttpStatus.METHOD_NOT_ALLOWED, "cannot_edit_this_week"),
     INVALID_DAY_OF_WEEK(HttpStatus.BAD_REQUEST, "invalid_day_of_week"),
-    CANNOT_EDIT_TIME_SLOT(HttpStatus.METHOD_NOT_ALLOWED, "cannot_edit_time_slot");
+    CANNOT_CREATE_OR_UPDATE_SLOT(HttpStatus.METHOD_NOT_ALLOWED, "cannot_create_or_update_slot");
     public final String code;
     public final HttpStatus httpStatus;
 
