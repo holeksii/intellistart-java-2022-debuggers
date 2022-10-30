@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.validators;
 
 import com.intellias.intellistart.interviewplanning.exceptions.CannotCreateOrUpdateSlotException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.models.InterviewerTimeSlot;
 import com.intellias.intellistart.interviewplanning.services.WeekService;
 import java.time.DayOfWeek;
@@ -11,40 +11,26 @@ import java.time.LocalDate;
  * InterviewerSlotValidate class. Used to validate interviewer time slot before creating or
  * updating.
  */
-public class InterviewerSlotValidate {
+public class InterviewerSlotValidator {
 
   private static final String WEEKEND_MESSAGE = "Cannot %s slot on weekend";
   private static final String NEXT_WEEK_MESSAGE = "Can %s slot only for next week";
 
-  private InterviewerSlotValidate() {
+  private InterviewerSlotValidator() {
   }
 
   /**
-   * Checks if slot is allowed to be created by interviewer.
+   * Validate interviewer time slot to be created.
    *
-   * @param interviewerTimeSlot slot to validate
-   * @throws InvalidDayOfWeekException if creating slot on weekend
-   * @throws CannotCreateOrUpdateSlotException if creating slot not for next week
+   * @param interviewerTimeSlot interviewer time slot
+   * @param action              CREATE or UPDATE
+   * @throws CannotCreateOrUpdateSlotException if interviewer time slot is invalid
+   * @throws InvalidBoundariesException         if editing slot on weekend
    */
-  public static void validateSlotToBeCreated(InterviewerTimeSlot interviewerTimeSlot) {
-    checkAction(interviewerTimeSlot, "create");
-  }
-
-  /**
-   * Checks if slot is allowed to be updated by interviewer.
-   *
-   * @param interviewerTimeSlot slot to validate
-   * @throws InvalidDayOfWeekException if updating slot on weekend
-   * @throws CannotCreateOrUpdateSlotException if updating slot not for next week
-   */
-  public static void validateSlotToBeUpdated(InterviewerTimeSlot interviewerTimeSlot) {
-    checkAction(interviewerTimeSlot, "edit");
-  }
-
-  private static void checkAction(InterviewerTimeSlot interviewerTimeSlot, String action) {
+  public static void validate(InterviewerTimeSlot interviewerTimeSlot, Action action) {
     var now = LocalDate.now();
     if (isWeekend(now.getDayOfWeek())) {
-      throw new InvalidDayOfWeekException(
+      throw new InvalidBoundariesException(
           String.format(WEEKEND_MESSAGE, action));
     } else if (interviewerTimeSlot.getWeekNum() != WeekService.getNextWeekNum()) {
       throw new CannotCreateOrUpdateSlotException(
@@ -54,6 +40,13 @@ public class InterviewerSlotValidate {
 
   private static boolean isWeekend(DayOfWeek dayOfWeek) {
     return dayOfWeek.getValue() > DayOfWeek.FRIDAY.getValue();
+  }
+
+  /**
+   * Action enum.
+   */
+  public enum Action {
+    CREATE, UPDATE
   }
 
 }

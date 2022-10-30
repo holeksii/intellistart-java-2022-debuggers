@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.intellias.intellistart.interviewplanning.exceptions.ApplicationErrorException;
 import com.intellias.intellistart.interviewplanning.models.InterviewerTimeSlot;
 import com.intellias.intellistart.interviewplanning.services.WeekService;
+import com.intellias.intellistart.interviewplanning.validators.InterviewerSlotValidator.Action;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
@@ -26,27 +27,27 @@ class InterviewerSlotValidateTest {
   @Test
   void validateSlotToBeUpdated() {
     if (LocalDate.now().getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()) {
-      assertDoesNotThrow(() -> InterviewerSlotValidate.validateSlotToBeUpdated(nextWeekSlot));
+      assertDoesNotThrow(() -> InterviewerSlotValidator.validate(nextWeekSlot, Action.UPDATE));
     } else {
       assertThrows(ApplicationErrorException.class,
-          () -> InterviewerSlotValidate.validateSlotToBeUpdated(nextWeekSlot));
+          () -> InterviewerSlotValidator.validate(nextWeekSlot, Action.UPDATE));
     }
 
     assertThrows(ApplicationErrorException.class,
-        () -> InterviewerSlotValidate.validateSlotToBeCreated(currentWeekSlot));
+        () -> InterviewerSlotValidator.validate(currentWeekSlot, Action.UPDATE));
   }
 
   @Test
   void validateSlotToBeCreated() {
     if (LocalDate.now().getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()) {
-      assertDoesNotThrow(() -> InterviewerSlotValidate.validateSlotToBeCreated(nextWeekSlot));
+      assertDoesNotThrow(() -> InterviewerSlotValidator.validate(nextWeekSlot, Action.CREATE));
     } else {
       assertThrows(ApplicationErrorException.class,
-          () -> InterviewerSlotValidate.validateSlotToBeCreated(nextWeekSlot));
+          () -> InterviewerSlotValidator.validate(nextWeekSlot, Action.CREATE));
     }
 
     assertThrows(ApplicationErrorException.class,
-        () -> InterviewerSlotValidate.validateSlotToBeCreated(currentWeekSlot));
+        () -> InterviewerSlotValidator.validate(currentWeekSlot, Action.CREATE));
   }
 
 }
