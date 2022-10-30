@@ -3,8 +3,7 @@ package com.intellias.intellistart.interviewplanning.validators;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.intellias.intellistart.interviewplanning.exceptions.CreateSlotNotAllowedException;
-import com.intellias.intellistart.interviewplanning.exceptions.UpdateSlotNotAllowedException;
+import com.intellias.intellistart.interviewplanning.exceptions.ApplicationErrorException;
 import com.intellias.intellistart.interviewplanning.models.InterviewerTimeSlot;
 import com.intellias.intellistart.interviewplanning.services.WeekService;
 import java.time.DayOfWeek;
@@ -29,11 +28,11 @@ class InterviewerSlotValidateTest {
     if (LocalDate.now().getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()) {
       assertDoesNotThrow(() -> InterviewerSlotValidate.validateSlotToBeUpdated(nextWeekSlot));
     } else {
-      assertThrows(UpdateSlotNotAllowedException.class,
+      assertThrows(ApplicationErrorException.class,
           () -> InterviewerSlotValidate.validateSlotToBeUpdated(nextWeekSlot));
     }
 
-    assertThrows(CreateSlotNotAllowedException.class,
+    assertThrows(ApplicationErrorException.class,
         () -> InterviewerSlotValidate.validateSlotToBeCreated(currentWeekSlot));
   }
 
@@ -42,11 +41,11 @@ class InterviewerSlotValidateTest {
     if (LocalDate.now().getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()) {
       assertDoesNotThrow(() -> InterviewerSlotValidate.validateSlotToBeCreated(nextWeekSlot));
     } else {
-      assertThrows(CreateSlotNotAllowedException.class,
+      assertThrows(ApplicationErrorException.class,
           () -> InterviewerSlotValidate.validateSlotToBeCreated(nextWeekSlot));
     }
 
-    assertThrows(CreateSlotNotAllowedException.class,
+    assertThrows(ApplicationErrorException.class,
         () -> InterviewerSlotValidate.validateSlotToBeCreated(currentWeekSlot));
   }
 
