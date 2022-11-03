@@ -56,6 +56,9 @@ public class ApplicationErrorException extends RuntimeException {
     CANNOT_EDIT_WEEK(HttpStatus.METHOD_NOT_ALLOWED, "cannot_edit_week"),
     INVALID_DAY_OF_WEEK(HttpStatus.BAD_REQUEST, "invalid_day_of_week"),
     CANNOT_CREATE_OR_UPDATE_SLOT(HttpStatus.METHOD_NOT_ALLOWED, "cannot_create_or_update_slot");
+    INVALID_BOOKING_LIMIT(HttpStatus.BAD_REQUEST, "invalid_booking_limit_number"),
+    CANNOT_EDIT_THIS_WEEK(HttpStatus.METHOD_NOT_ALLOWED, "cannot_edit_this_week");
+
     public final String code;
     public final HttpStatus httpStatus;
 
