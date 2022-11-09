@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.services;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.InterviewerNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.NotFoundException;
 import com.intellias.intellistart.interviewplanning.models.InterviewerTimeSlot;
 import com.intellias.intellistart.interviewplanning.models.User;
 import com.intellias.intellistart.interviewplanning.models.User.UserRole;
@@ -11,7 +11,6 @@ import com.intellias.intellistart.interviewplanning.repositories.UserRepository;
 import com.intellias.intellistart.interviewplanning.utils.Utils;
 import com.intellias.intellistart.interviewplanning.utils.mappers.InterviewerSlotMapper;
 import com.intellias.intellistart.interviewplanning.validators.InterviewerSlotValidator;
-import com.intellias.intellistart.interviewplanning.validators.InterviewerSlotValidator.Action;
 import java.time.DayOfWeek;
 import java.util.Comparator;
 import java.util.Set;
@@ -56,7 +55,7 @@ public class InterviewerService {
    */
   public InterviewerTimeSlot createSlot(Long interviewerId,
       InterviewerTimeSlot interviewerTimeSlot) {
-    InterviewerSlotValidator.validate(interviewerTimeSlot, Action.CREATE);
+    InterviewerSlotValidator.validate(interviewerTimeSlot);
     User interviewer = userRepository.getReferenceById(interviewerId);
     interviewerTimeSlot.setInterviewer(interviewer);
     return interviewerTimeSlotRepository.saveAndFlush(interviewerTimeSlot);
@@ -80,7 +79,7 @@ public class InterviewerService {
    */
   public Set<InterviewerTimeSlot> getRelevantInterviewerSlots(Long interviewerId) {
     if (!userRepository.existsById(interviewerId)) {
-      throw new InterviewerNotFoundException(interviewerId);
+      throw NotFoundException.interviewer(interviewerId);
     }
     return interviewerTimeSlotRepository
         .findByInterviewerIdAndWeekNumGreaterThanEqual(
@@ -93,11 +92,11 @@ public class InterviewerService {
    * @param interviewerId id of interviewer
    * @param weekId        id of week
    * @return a set of interviewer time slots
-   * @throws InterviewerNotFoundException if no interviewer is found
+   * @throws NotFoundException if no interviewer is found
    */
   public Set<InterviewerSlotDto> getSlotsByWeekId(Long interviewerId, int weekId) {
     if (!userRepository.existsByIdAndRole(interviewerId, UserRole.INTERVIEWER)) {
-      throw new InterviewerNotFoundException(interviewerId);
+      throw NotFoundException.interviewer(interviewerId);
     }
 
     Set<InterviewerTimeSlot> slots = interviewerTimeSlotRepository
@@ -131,7 +130,7 @@ public class InterviewerService {
    */
   public InterviewerTimeSlot updateSlot(Long interviewerId, Long slotId,
       InterviewerTimeSlot interviewerTimeSlot) {
-    InterviewerSlotValidator.validate(interviewerTimeSlot, Action.UPDATE);
+    InterviewerSlotValidator.validate(interviewerTimeSlot);
     User interviewer = userRepository.getReferenceById(interviewerId);
     InterviewerTimeSlot slot = getSlotById(slotId);
     slot.setFrom(interviewerTimeSlot.getFrom());
@@ -152,7 +151,7 @@ public class InterviewerService {
     try {
       return (User) Hibernate.unproxy(userRepository.getReferenceById(id));
     } catch (EntityNotFoundException e) {
-      throw new InterviewerNotFoundException(id);
+      throw NotFoundException.interviewer(id);
     }
   }
 }

@@ -1,8 +1,7 @@
 package com.intellias.intellistart.interviewplanning.services;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CandidateNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.TimeSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.NotFoundException;
 import com.intellias.intellistart.interviewplanning.models.CandidateTimeSlot;
 import com.intellias.intellistart.interviewplanning.models.User;
 import com.intellias.intellistart.interviewplanning.models.User.UserRole;
@@ -77,7 +76,7 @@ public class CandidateService {
    */
   public Set<CandidateSlotDto> getAllCandidateSlots(Long candidateId) {
     if (!userRepository.existsByIdAndRole(candidateId, UserRole.CANDIDATE)) {
-      throw new CandidateNotFoundException(candidateId);
+      throw NotFoundException.candidate(candidateId);
     }
     return getCandidateSlotsWithBookings(candidateTimeSlotRepository.findAll());
   }
@@ -107,7 +106,7 @@ public class CandidateService {
     // validate from, to, date
     // check if current time is by end of Friday (00:00) of current week
     if (!candidateTimeSlotRepository.existsById(slotId)) {
-      throw new TimeSlotNotFoundException(slotId);
+      throw NotFoundException.timeSlot(slotId);
     }
     CandidateTimeSlot timeSlot = candidateTimeSlotRepository.getReferenceById(slotId);
     timeSlot.setFrom(slot.getFrom());
@@ -126,7 +125,7 @@ public class CandidateService {
     try {
       return (User) Hibernate.unproxy(userRepository.getReferenceById(id));
     } catch (EntityNotFoundException e) {
-      throw new CandidateNotFoundException(id);
+      throw NotFoundException.candidate(id);
     }
   }
 }

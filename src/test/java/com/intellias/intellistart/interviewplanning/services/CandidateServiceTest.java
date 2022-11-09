@@ -6,8 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CandidateNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.TimeSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.NotFoundException;
 import com.intellias.intellistart.interviewplanning.models.CandidateTimeSlot;
 import com.intellias.intellistart.interviewplanning.models.User;
 import com.intellias.intellistart.interviewplanning.models.User.UserRole;
@@ -103,7 +102,7 @@ class CandidateServiceTest {
   @Test
   void testGetAllCandidateSlotsWrongId() {
     when(userRepository.existsByIdAndRole(-1L, UserRole.CANDIDATE)).thenReturn(false);
-    assertThrows(CandidateNotFoundException.class,
+    assertThrows(NotFoundException.class,
         () -> service.getAllCandidateSlots(-1L));
   }
 
@@ -121,7 +120,7 @@ class CandidateServiceTest {
   @Test
   void testUpdateSlotWrongId() {
     when(candidateSlotRepository.existsById(-1L)).thenReturn(false);
-    assertThrows(TimeSlotNotFoundException.class,
+    assertThrows(NotFoundException.class,
         () -> service.updateSlot(-1L, candidateSlot));
   }
 
@@ -134,6 +133,6 @@ class CandidateServiceTest {
   @Test
   void testGetByIdNonExisting() {
     when(userRepository.getReferenceById(-1L)).thenThrow(EntityNotFoundException.class);
-    assertThrows(CandidateNotFoundException.class, () -> service.getById(-1L));
+    assertThrows(NotFoundException.class, () -> service.getById(-1L));
   }
 }

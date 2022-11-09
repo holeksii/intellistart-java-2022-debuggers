@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.ApplicationErrorException;
-import com.intellias.intellistart.interviewplanning.exceptions.InterviewerNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.NotFoundException;
 import com.intellias.intellistart.interviewplanning.models.Booking;
 import com.intellias.intellistart.interviewplanning.models.CandidateTimeSlot;
 import com.intellias.intellistart.interviewplanning.models.InterviewerTimeSlot;
@@ -145,7 +145,7 @@ class InterviewerServiceTest {
     when(userRepository
         .existsById(-1L))
         .thenReturn(false);
-    assertThrows(InterviewerNotFoundException.class,
+    assertThrows(NotFoundException.class,
         () -> interviewerService.getRelevantInterviewerSlots(-1L));
   }
 
@@ -169,9 +169,9 @@ class InterviewerServiceTest {
   void testGetSlotsByWeekIdWithWrongInterviewerId() {
     when(userRepository
         .existsByIdAndRole(-1L, UserRole.INTERVIEWER))
-        .thenThrow(new InterviewerNotFoundException(-1L));
+        .thenThrow(NotFoundException.interviewer(-1L));
     int weekNum = WeekService.getNextWeekNum();
-    assertThrows(InterviewerNotFoundException.class,
+    assertThrows(NotFoundException.class,
         () -> interviewerService.getSlotsByWeekId(-1L, weekNum));
   }
 
@@ -179,9 +179,9 @@ class InterviewerServiceTest {
   void testGetSlotsByWeekIdWithWrongInterviewerRole() {
     when(userRepository
         .existsByIdAndRole(2L, UserRole.INTERVIEWER))
-        .thenThrow(new InterviewerNotFoundException(2L));
+        .thenThrow(NotFoundException.interviewer(2L));
     int weekNum = WeekService.getNextWeekNum();
-    assertThrows(InterviewerNotFoundException.class,
+    assertThrows(NotFoundException.class,
         () -> interviewerService.getSlotsByWeekId(2L, weekNum));
   }
 
@@ -227,6 +227,6 @@ class InterviewerServiceTest {
     when(userRepository
         .getReferenceById(-1L))
         .thenThrow(new EntityNotFoundException());
-    assertThrows(InterviewerNotFoundException.class, () -> interviewerService.getById(-1L));
+    assertThrows(NotFoundException.class, () -> interviewerService.getById(-1L));
   }
 }

@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.services;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
-import com.intellias.intellistart.interviewplanning.exceptions.TimeSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.NotFoundException;
 import com.intellias.intellistart.interviewplanning.models.Booking;
 import com.intellias.intellistart.interviewplanning.models.CandidateTimeSlot;
 import com.intellias.intellistart.interviewplanning.models.InterviewerTimeSlot;
@@ -49,11 +49,11 @@ public class BookingService {
 
     Long interviewerSlotId = bookingDto.getInterviewerSlotId();
     InterviewerTimeSlot interviewerSlot = interviewerTimeSlotRepository.findById(interviewerSlotId)
-        .orElseThrow(() -> new TimeSlotNotFoundException(interviewerSlotId));
+        .orElseThrow(() -> NotFoundException.timeSlot(interviewerSlotId));
 
     Long candidateSlotId = bookingDto.getCandidateSlotId();
     CandidateTimeSlot candidateSlot = candidateTimeSlotRepository.findById(candidateSlotId)
-        .orElseThrow(() -> new TimeSlotNotFoundException(candidateSlotId));
+        .orElseThrow(() -> NotFoundException.timeSlot(candidateSlotId));
 
     Booking booking = BookingMapper.mapToEntity(bookingDto, interviewerSlot, candidateSlot);
 
