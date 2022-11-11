@@ -6,9 +6,11 @@ import com.intellias.intellistart.interviewplanning.models.User.UserRole;
 import com.intellias.intellistart.interviewplanning.services.CoordinatorService;
 import com.intellias.intellistart.interviewplanning.services.InterviewerService;
 import com.intellias.intellistart.interviewplanning.services.UserService;
+import java.util.List;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller involved in login and user CRUD operations.
  */
 @RestController
+@RequiredArgsConstructor
 @Slf4j
 public class UserController {
 
@@ -27,33 +30,56 @@ public class UserController {
   private final CoordinatorService coordinatorService;
   private final UserService userService;
 
+
   /**
-   * Constructor.
+   * Test method to see what token contains.
    *
-   * @param coordinatorService coordinator service
-   * @param interviewerService interviewer service
-   * @param userService        user service
+   * @param authentication Object from spring security containing the principle presented by our
+   *                       user.
+   * @return toString() of received authentication object
    */
-  @Autowired
-  public UserController(CoordinatorService coordinatorService,
-      InterviewerService interviewerService, UserService userService) {
-    this.coordinatorService = coordinatorService;
-    this.interviewerService = interviewerService;
-    this.userService = userService;
+  @GetMapping("/")
+  //todo remove
+  public String test(Authentication authentication) {
+    if (authentication != null) {
+      log.debug("Authentication class: " + authentication.getClass());
+      log.debug("Authentication authorities: " + authentication.getAuthorities());
+      log.debug("Authentication principal class: {}", authentication.getPrincipal().getClass());
+    } else {
+      log.debug("Not authenticated");
+    }
+    return String.valueOf(authentication);
   }
+
+  /**
+   * Me endpoint. Provides current user info
+   *
+   * @return current user info as json object containing email and role
+   */
+  @GetMapping("/me")
+  public User getUserInfo(Authentication authentication) {
+    return (User) authentication.getPrincipal();
+  }
+
 
   @GetMapping("/interviewers/{interviewerId}")
   public User getInterviewerById(@PathVariable Long interviewerId) {
     return interviewerService.getById(interviewerId);
   }
 
-  //to be removed
+  //todo remove
   @GetMapping("/users/{id}")
   public User getUser(@PathVariable Long id) {
-    return userService.getUserById(id);
+    return userService.getById(id);
   }
 
-  //to be removed
+  //todo remove
+  @GetMapping("/users")
+  public List<User> getUser() {
+    return userService.getAll();
+  }
+
+  //todo remove
   @PostMapping("/interviewers")
   public User postInterviewer(@RequestBody TextNode email) {
     return userService.create(email.asText(), UserRole.INTERVIEWER);

@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.intellias.intellistart.interviewplanning.exceptions.NotFoundException;
 import com.intellias.intellistart.interviewplanning.models.User;
 import com.intellias.intellistart.interviewplanning.models.User.UserRole;
+import com.intellias.intellistart.interviewplanning.security.jwt.JwtRequestFilter;
 import com.intellias.intellistart.interviewplanning.services.CoordinatorService;
 import com.intellias.intellistart.interviewplanning.services.InterviewerService;
 import com.intellias.intellistart.interviewplanning.services.UserService;
@@ -22,6 +23,7 @@ import java.util.HashSet;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,6 +33,20 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
 
+  private static final String email = "test.user@gmail.com";
+  private static final User testCandidate = new User(email, UserRole.CANDIDATE);
+  private static final User testCoordinator = new User(email, UserRole.COORDINATOR);
+  private static final User testInterviewer = new User(email, UserRole.INTERVIEWER);
+
+  static {
+    testCandidate.setId(1L);
+    testInterviewer.setId(1L);
+  }
+
+  @MockBean
+  private CommandLineRunner commandLineRunner;
+  @MockBean
+  private JwtRequestFilter jwtRequestFilter;
   @Autowired
   private MockMvc mockMvc;
   @MockBean
@@ -39,14 +55,6 @@ class UserControllerTest {
   private CoordinatorService coordinatorService;
   @MockBean
   private UserService userService;
-  private static final String email = "test.user@gmail.com";
-  private static final User testCoordinator = new User(email, UserRole.COORDINATOR);
-  private static final User testInterviewer = new User(email, UserRole.INTERVIEWER);
-
-  static {
-    testInterviewer.setId(1L);
-    testCoordinator.setId(1L);
-  }
 
   @Test
   void testCreateInterviewer() {
@@ -129,7 +137,7 @@ class UserControllerTest {
 
   @Test
   void testGetUser() {
-    when(userService.getUserById(1L)).thenReturn(testCoordinator);
+    when(userService.getById(1L)).thenReturn(testCoordinator);
     checkResponseOk(get("/users/{id}", 1),
         null, json(testCoordinator), mockMvc);
   }
