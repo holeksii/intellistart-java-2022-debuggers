@@ -9,11 +9,8 @@ import com.intellias.intellistart.interviewplanning.validators.PeriodValidator;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 /**
  * InterviewerSlot dto.

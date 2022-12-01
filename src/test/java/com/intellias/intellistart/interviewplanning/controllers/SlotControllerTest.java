@@ -1,18 +1,23 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
 import static com.intellias.intellistart.interviewplanning.utils.TestSecurityUtils.CANDIDATE_EMAIL;
+import static com.intellias.intellistart.interviewplanning.utils.TestSecurityUtils.INTERVIEWER_ID;
+import static com.intellias.intellistart.interviewplanning.utils.TestSecurityUtils.interviewer;
+import static com.intellias.intellistart.interviewplanning.utils.TestUtils.checkResponseBad;
 import static com.intellias.intellistart.interviewplanning.utils.TestUtils.checkResponseOk;
 import static com.intellias.intellistart.interviewplanning.utils.TestUtils.json;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.models.CandidateTimeSlot;
 import com.intellias.intellistart.interviewplanning.models.InterviewerTimeSlot;
-import com.intellias.intellistart.interviewplanning.security.jwt.JwtRequestFilter;
 import com.intellias.intellistart.interviewplanning.services.CandidateService;
 import com.intellias.intellistart.interviewplanning.services.InterviewerService;
 import com.intellias.intellistart.interviewplanning.services.WeekServiceImp;
@@ -20,16 +25,14 @@ import com.intellias.intellistart.interviewplanning.services.interfaces.WeekServ
 import com.intellias.intellistart.interviewplanning.utils.TestSecurityUtils;
 import com.intellias.intellistart.interviewplanning.utils.WithCustomUser;
 import java.time.LocalTime;
-import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest(classes = TestSecurityUtils.class)
@@ -37,78 +40,66 @@ import org.springframework.test.web.servlet.MockMvc;
 @WithCustomUser
 class SlotControllerTest {
 
-  public static final String CANDIDATE_EMAIL = "candidate@test.com";
-  private static final InterviewerTimeSlot interviewerSlot =
-      new InterviewerTimeSlot("08:00", "10:00", "WEDNESDAY", 202240);
-  private static final CandidateTimeSlot candidateSlot =
-      new CandidateTimeSlot(CANDIDATE_EMAIL, "2022-11-03", "08:00", "10:00");
-  private static final Long interviewerId = 1L;
-  private static final Long candidateId = 1L;
+  private static final InterviewerTimeSlot interviewerSlot = new InterviewerTimeSlot("08:00", "10:00", "WEDNESDAY",
+      202240);
+  private static final CandidateTimeSlot candidateSlot = new CandidateTimeSlot(CANDIDATE_EMAIL, "2022-11-03", "08:00",
+      "10:00");
+  private static final BookingDto bookingDto = BookingDto.builder().from(LocalTime.of(8, 0)).to(LocalTime.of(10, 0))
+      .subject("some subject").description("some desc")
+      .interviewerSlotId(interviewerSlot.getId())
+      .candidateSlotId(candidateSlot.getId())
+      .build();
+  private final WeekService actualWeekService = new WeekServiceImp();
   @SpyBean
   private WeekServiceImp weekService;
-  private final WeekService actualWeekService = new WeekServiceImp();
-  private static final BookingDto bookingDto =
-      BookingDto.builder()
-          .from(LocalTime.of(8, 0))
-          .to(LocalTime.of(10, 0))
-          .subject("some subject")
-          .description("some desc")
-          .interviewerSlotId(interviewerSlot.getId())
-          .candidateSlotId(candidateSlot.getId())
-          .build();
-  private final CandidateSlotDto candidateSlotDto =
-      new CandidateSlotDto(candidateId,LocalTime.parse("08:00"),
-          LocalTime.parse("10:00"),actualWeekService.getCurrentDate(),List.of(bookingDto));
-  private final InterviewerSlotDto interviewerSlotDto1 =
-      new InterviewerSlotDto(interviewerId, actualWeekService.getCurrentWeekNum(),
-          "friday", LocalTime.parse("08:00"),
-          LocalTime.parse("10:00"), List.of(bookingDto));
-  private final InterviewerSlotDto interviewerSlotDto2 =
-      new InterviewerSlotDto(interviewerId, actualWeekService.getNextWeekNum(),
-          "friday", LocalTime.parse("08:00"),
-          LocalTime.parse("10:00"), List.of(bookingDto));
 
-  static {
+  @BeforeAll
+  static void setupSlots() {
     interviewerSlot.setId(1L);
+    interviewerSlot.setInterviewer(TestSecurityUtils.interviewer);
     candidateSlot.setId(1L);
   }
 
-  @MockBean
-  private CommandLineRunner commandLineRunner;
+  private final CandidateSlotDto candidateSlotDto =
+      new CandidateSlotDto(candidateSlot.getId(), LocalTime.parse("08:00"),
+          LocalTime.parse("10:00"), actualWeekService.getCurrentDate(), List.of(bookingDto));
+
+  private final InterviewerSlotDto interviewerSlotDto1 =
+      new InterviewerSlotDto(INTERVIEWER_ID, actualWeekService.getCurrentWeekNum(),
+          "friday", LocalTime.parse("08:00"),
+          LocalTime.parse("10:00"), List.of(bookingDto));
+  private final InterviewerSlotDto interviewerSlotDto2 =
+      new InterviewerSlotDto(INTERVIEWER_ID, actualWeekService.getNextWeekNum(),
+          "friday", LocalTime.parse("08:00"),
+          LocalTime.parse("10:00"), List.of(bookingDto));
   @Autowired
   private MockMvc mockMvc;
-  @MockBean
+  @SpyBean
   private InterviewerService interviewerService;
   @MockBean
   private CandidateService candidateService;
 
   @Test
   void testGetAllInterviewerSlots() {
-    when(interviewerService
-        .getRelevantInterviewerSlots(1L))
-        .thenReturn(List.of(interviewerSlotDto1));
+    doReturn(List.of(interviewerSlotDto1)).when(interviewerService).getRelevantInterviewerSlots(1L);
     checkResponseOk(
-        get("/interviewers/{interviewerId}/slots", 1L),
+        get("/interviewers/{INTERVIEWER_ID}/slots", 1L),
         null, json(List.of(interviewerSlotDto1)), mockMvc);
   }
 
   @Test
   void testAddSlotToInterviewer() {
-    when(interviewerService
-        .createSlot(1L, interviewerSlotDto1))
-        .thenReturn(interviewerSlotDto1);
+    doReturn(interviewerSlotDto1).when(interviewerService).createSlot(1L, interviewerSlotDto1);
     checkResponseOk(
-        post("/interviewers/{interviewerId}/slots", 1L),
+        post("/interviewers/{INTERVIEWER_ID}/slots", 1L),
         json(interviewerSlotDto1), json(interviewerSlotDto1), mockMvc);
   }
 
   @Test
   void testUpdateInterviewerTimeSlot() {
-    when(interviewerService
-        .updateSlot(1L, 1L, interviewerSlotDto1))
-        .thenReturn(interviewerSlotDto1);
+    doReturn(interviewerSlotDto1).when(interviewerService).updateSlot(1L, 1L, interviewerSlotDto1);
     checkResponseOk(
-        post("/interviewers/{interviewerId}/slots/{slotId}", 1L, 1L),
+        post("/interviewers/{INTERVIEWER_ID}/slots/{slotId}", 1L, 1L),
         json(interviewerSlotDto1), json(interviewerSlotDto1), mockMvc);
   }
 
@@ -125,22 +116,55 @@ class SlotControllerTest {
 
   @Test
   void testGetCurrentWeekInterviewerSlots() {
-    when(interviewerService.getSlotsByWeekId(interviewerId,
+    when(interviewerService.getSlotsByWeekId(INTERVIEWER_ID,
         actualWeekService.getCurrentWeekNum()))
         .thenReturn(List.of(interviewerSlotDto1));
     checkResponseOk(
-        get("/interviewers/{interviewerId}/slots/weeks/current", interviewerId),
+        get("/interviewers/{INTERVIEWER_ID}/slots/weeks/current", INTERVIEWER_ID),
         null, json(List.of(interviewerSlotDto1)), mockMvc);
   }
 
   @Test
   void testGetNextWeekInterviewerSlots() {
-    when(interviewerService.getSlotsByWeekId(interviewerId,
+    when(interviewerService.getSlotsByWeekId(INTERVIEWER_ID,
         actualWeekService.getNextWeekNum()))
         .thenReturn(List.of(interviewerSlotDto2));
-    System.out.println(interviewerSlotDto2);
+
     checkResponseOk(
-        get("/interviewers/{interviewerId}/slots/weeks/next", interviewerId),
+        get("/interviewers/{INTERVIEWER_ID}/slots/weeks/next", INTERVIEWER_ID),
         null, json(List.of(interviewerSlotDto2)), mockMvc);
+  }
+
+  @Test
+  void testDeleteSlots() {
+    when(interviewerService.getSlotById(interviewerSlot.getId()))
+        .thenReturn(interviewerSlot);
+    interviewer.setId(INTERVIEWER_ID); //git actions somehow reset id to 1 and break test
+
+    checkResponseOk(
+        delete("/interviewers/{INTERVIEWER_ID}/slots/{slotId}", INTERVIEWER_ID, interviewerSlot.getId()),
+        null, null, mockMvc);
+  }
+
+  @Test
+  @WithCustomUser(TestSecurityUtils.INTERVIEWER_EMAIL)
+  void testDeleteSlotsOfAnotherUserNoPermission() {
+    when(interviewerService.getSlotById(interviewerSlot.getId()))
+        .thenReturn(interviewerSlot);
+
+    checkResponseBad(
+        delete("/interviewers/{INTERVIEWER_ID}/slots/{slotId}", INTERVIEWER_ID + 2, interviewerSlot.getId()),
+        null, null, status().isForbidden(), mockMvc);
+  }
+
+  @Test
+    //auth as coordinator bypasses "edit only myself" check, but slot is not bounded to given in url interviewer id
+  void testDeleteSlotsSlotBoundedToAnotherUser() {
+    when(interviewerService.getSlotById(interviewerSlot.getId()))
+        .thenReturn(interviewerSlot);
+
+    checkResponseBad(
+        delete("/interviewers/{INTERVIEWER_ID}/slots/{slotId}", INTERVIEWER_ID + 2, interviewerSlot.getId()),
+        null, null, status().isNotFound(), mockMvc);
   }
 }

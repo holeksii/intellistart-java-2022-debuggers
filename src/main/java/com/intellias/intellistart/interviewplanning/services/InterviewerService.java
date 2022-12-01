@@ -41,8 +41,7 @@ public class InterviewerService {
    * @param interviewerSlotDto dto to validate and save
    * @return slot
    */
-  public InterviewerSlotDto createSlot(Long interviewerId,
-      InterviewerSlotDto interviewerSlotDto) {
+  public InterviewerSlotDto createSlot(Long interviewerId, InterviewerSlotDto interviewerSlotDto) {
     User interviewer = userRepository.getReferenceById(interviewerId);
     InterviewerTimeSlot interviewerTimeSlot = InterviewerSlotMapper.mapToEntity(interviewer,
         interviewerSlotDto);
