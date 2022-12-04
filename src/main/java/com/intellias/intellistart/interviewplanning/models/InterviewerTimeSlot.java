@@ -2,6 +2,7 @@ package com.intellias.intellistart.interviewplanning.models;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.intellias.intellistart.interviewplanning.models.interfaces.TimeSlot;
 import com.intellias.intellistart.interviewplanning.utils.Utils;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -30,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Setter
 @ToString
 @NoArgsConstructor
-public class InterviewerTimeSlot {
+public class InterviewerTimeSlot implements TimeSlot {
 
   @ManyToOne
   @JsonIgnore
@@ -115,4 +116,5 @@ public class InterviewerTimeSlot {
   public int hashCode() {
     return getClass().hashCode();
   }
+
 }

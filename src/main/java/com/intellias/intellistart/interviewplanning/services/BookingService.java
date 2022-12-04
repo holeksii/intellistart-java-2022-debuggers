@@ -62,7 +62,7 @@ public class BookingService {
    * @param bookingDto booking
    */
   private void validate(BookingDto bookingDto) {
-    PeriodValidator.validate(bookingDto.getFrom(), bookingDto.getTo());
+    PeriodValidator.validate(bookingDto);
     validateTextFieldsLength(bookingDto);
   }
 

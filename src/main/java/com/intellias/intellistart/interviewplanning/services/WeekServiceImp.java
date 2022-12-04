@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.services;
 
 import com.intellias.intellistart.interviewplanning.services.interfaces.WeekService;
+import com.intellias.intellistart.interviewplanning.utils.Utils;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -60,8 +61,7 @@ public class WeekServiceImp implements WeekService {
    * @return number of week
    */
   public int getWeekNumByDate(LocalDate date) {
-    return date.get(WeekFields.ISO.weekOfWeekBasedYear())
-        + date.get(IsoFields.WEEK_BASED_YEAR) * 100;
+    return Utils.getWeekNumByDate(date);
   }
 
   /**
@@ -78,7 +78,8 @@ public class WeekServiceImp implements WeekService {
         .with(WeekFields.ISO.dayOfWeek(), dayOfWeek.getValue());
   }
 
-  public DayOfWeek getNowDay() {
+  public DayOfWeek getCurrentDay() {
     return LocalDate.now().getDayOfWeek();
   }
+
 }

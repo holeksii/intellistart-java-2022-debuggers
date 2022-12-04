@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.services;
 
-import static com.intellias.intellistart.interviewplanning.utils.TestSecurityUtils.CANDIDATE_EMAIL;
-import static com.intellias.intellistart.interviewplanning.utils.TestSecurityUtils.interviewer;
+import static com.intellias.intellistart.interviewplanning.test_utils.TestSecurityUtils.CANDIDATE_EMAIL;
+import static com.intellias.intellistart.interviewplanning.test_utils.TestSecurityUtils.interviewer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,7 +18,7 @@ import com.intellias.intellistart.interviewplanning.repositories.InterviewerTime
 import com.intellias.intellistart.interviewplanning.repositories.UserRepository;
 import com.intellias.intellistart.interviewplanning.services.interfaces.WeekService;
 import com.intellias.intellistart.interviewplanning.utils.mappers.InterviewerSlotMapper;
-import com.intellias.intellistart.interviewplanning.validators.InterviewerSlotValidator;
+import com.intellias.intellistart.interviewplanning.validators.SlotValidator;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
@@ -100,7 +100,7 @@ class InterviewerServiceTest {
   @BeforeEach
   void setService() {
     interviewerService = new InterviewerService(interviewerTimeSlotRepository, userRepository,
-        bookingRepository, weekService, new InterviewerSlotValidator(weekService));
+        bookingRepository, weekService, new SlotValidator(weekService));
   }
 
   @Test
@@ -112,7 +112,7 @@ class InterviewerServiceTest {
         .save(any(InterviewerTimeSlot.class)))
         .thenReturn(timeSlot);
 
-    when(weekService.getNowDay()).thenReturn(DayOfWeek.MONDAY);
+    when(weekService.getCurrentDay()).thenReturn(DayOfWeek.MONDAY);
 
     InterviewerSlotDto createdSlot = interviewerService.createSlot(1L, interviewerSlotDto);
     assertEquals(interviewerSlotDtoWithoutBooking, createdSlot);
@@ -204,7 +204,7 @@ class InterviewerServiceTest {
         .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
     when(weekService.getNextWeekNum()).thenCallRealMethod();
-    when(weekService.getNowDay()).thenReturn(DayOfWeek.MONDAY);
+    when(weekService.getCurrentDay()).thenReturn(DayOfWeek.MONDAY);
 
     var slot = interviewerService
         .updateSlot(1L, 1L, interviewerSlotDtoWithoutBooking);

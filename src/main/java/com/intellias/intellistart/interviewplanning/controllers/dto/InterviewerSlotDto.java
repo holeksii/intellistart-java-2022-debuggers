@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.intellias.intellistart.interviewplanning.models.interfaces.TimeSlot;
 import com.intellias.intellistart.interviewplanning.utils.Utils;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class InterviewerSlotDto {
+public class InterviewerSlotDto implements TimeSlot {
 
   private Long id;
   private int weekNum;
@@ -103,4 +104,5 @@ public class InterviewerSlotDto {
       this.dayOfWeek = DayOfWeek.valueOf(dayOfWeek.toUpperCase());
     }
   }
+
 }
