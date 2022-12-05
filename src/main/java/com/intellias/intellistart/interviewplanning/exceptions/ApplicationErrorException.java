@@ -79,10 +79,10 @@ public class ApplicationErrorException extends RuntimeException {
     CANNOT_EDIT_SLOT_WITH_BOOKING(HttpStatus.BAD_REQUEST,
         "Cannot update or delete time slot that has booking"),
     REVOKE_USER_WITH_SLOT(HttpStatus.BAD_REQUEST,
-        "Cannot revoke user who has time slot in the future"),
+        "Cannot revoke or grant user who has time slot in the future"),
 
     // Forbidden error code
-    SELF_ROLE_REVOKING(HttpStatus.FORBIDDEN, "Forbidden to revoke yourself"),
+    SELF_ROLE_REVOKING(HttpStatus.FORBIDDEN, "Forbidden to revoke or grant yourself"),
     ATTEMPT_TO_EDIT_OTHER_USER_DATA(HttpStatus.FORBIDDEN, "You have no permission to edit this user data"),
     NO_EMAIL_SPECIFIED(HttpStatus.BAD_REQUEST,
         "As coordinator you need to specify candidate email as request param 'email' when adding candidate time slot"),
