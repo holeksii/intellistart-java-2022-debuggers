@@ -12,6 +12,7 @@ import com.intellias.intellistart.interviewplanning.repositories.BookingReposito
 import com.intellias.intellistart.interviewplanning.repositories.CandidateTimeSlotRepository;
 import com.intellias.intellistart.interviewplanning.repositories.InterviewerTimeSlotRepository;
 import com.intellias.intellistart.interviewplanning.utils.mappers.BookingMapper;
+import com.intellias.intellistart.interviewplanning.validators.BookingValidator;
 import com.intellias.intellistart.interviewplanning.validators.PeriodValidator;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,7 +53,7 @@ public class BookingService {
         .orElseThrow(() -> NotFoundException.timeSlot(candidateSlotId));
 
     Booking booking = BookingMapper.mapToEntity(bookingDto, interviewerSlot, candidateSlot);
-
+    BookingValidator.validate(booking);
     return BookingMapper.mapToDto(bookingRepository.save(booking));
   }
 
@@ -137,6 +138,12 @@ public class BookingService {
     validate(bookingDto);
     Booking booking = bookingRepository.findById(id)
         .orElseThrow(() -> NotFoundException.booking(id));
+
+    Booking newBooking = BookingMapper.mapToEntity(bookingDto,
+        booking.getInterviewerSlot(),
+        booking.getCandidateSlot());
+    BookingValidator.validate(newBooking);
+
     booking.setFrom(bookingDto.getFrom());
     booking.setTo(bookingDto.getTo());
     booking.setSubject(bookingDto.getSubject());
