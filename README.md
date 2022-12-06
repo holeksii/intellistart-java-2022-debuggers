@@ -2,8 +2,10 @@
 
 # Interview planning application
 
-## Run with Docker
 
+
+## Run with Docker
+### JDK 11 or newer is required for the project.
 #### - Include `db.env` file with environment variables for `postgresDB`
 
 Environment variables include:
