@@ -1,7 +1,9 @@
 package com.intellias.intellistart.interviewplanning.validators;
 
+import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.exceptions.ApplicationErrorException;
 import com.intellias.intellistart.interviewplanning.exceptions.ApplicationErrorException.ErrorCode;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidInputException;
 import com.intellias.intellistart.interviewplanning.models.Booking;
 
 /**
@@ -14,7 +16,7 @@ public class BookingValidator {
    *
    * @param booking             booking
    */
-  public static void validate(Booking booking) {
+  public void validateSlotOverlapping(Booking booking) {
     var interviewerTimeSlot = booking.getInterviewerSlot();
     var candidateTimeSlot = booking.getCandidateSlot();
 
@@ -28,6 +30,15 @@ public class BookingValidator {
         || booking.getTo().equals(candidateTimeSlot.getTo()))) {
       throw new ApplicationErrorException(ErrorCode.INVALID_BOUNDARIES,
           "booking time boundaries not overlapping with slots boundaries");
+    }
+  }
+
+  public void validateTextFieldsLength(BookingDto bookingDto) {
+    if (bookingDto.getSubject().length() > Booking.MAX_SUBJECT_LENGTH) {
+      throw InvalidInputException.subject(bookingDto.getSubject().length());
+    }
+    if (bookingDto.getDescription().length() > Booking.MAX_DESCRIPTION_LENGTH) {
+      throw InvalidInputException.description(bookingDto.getDescription().length());
     }
   }
 

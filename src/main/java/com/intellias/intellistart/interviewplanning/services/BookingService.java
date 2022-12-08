@@ -32,6 +32,7 @@ public class BookingService {
   private final BookingLimitRepository bookingLimitRepository;
   private final InterviewerTimeSlotRepository interviewerTimeSlotRepository;
   private final CandidateTimeSlotRepository candidateTimeSlotRepository;
+  private final BookingValidator bookingValidator;
 
   /**
    * Creates new booking.
@@ -41,7 +42,9 @@ public class BookingService {
    * @throws NotFoundException if slot with the specified id is not found
    */
   public BookingDto createBooking(BookingDto bookingDto) {
-    validate(bookingDto);
+    PeriodValidator.validate(bookingDto);
+    bookingValidator.validateTextFieldsLength(bookingDto);
+
     Long interviewerSlotId = bookingDto.getInterviewerSlotId();
     InterviewerTimeSlot interviewerSlot = interviewerTimeSlotRepository.findById(interviewerSlotId)
         .orElseThrow(() -> NotFoundException.timeSlot(interviewerSlotId));
@@ -53,27 +56,8 @@ public class BookingService {
         .orElseThrow(() -> NotFoundException.timeSlot(candidateSlotId));
 
     Booking booking = BookingMapper.mapToEntity(bookingDto, interviewerSlot, candidateSlot);
-    BookingValidator.validate(booking);
+    bookingValidator.validateSlotOverlapping(booking);
     return BookingMapper.mapToDto(bookingRepository.save(booking));
-  }
-
-  /**
-   * Checks time boundaries, length of subject and description of the booking.
-   *
-   * @param bookingDto booking
-   */
-  private void validate(BookingDto bookingDto) {
-    PeriodValidator.validate(bookingDto);
-    validateTextFieldsLength(bookingDto);
-  }
-
-  private void validateTextFieldsLength(BookingDto bookingDto) {
-    if (bookingDto.getSubject().length() > Booking.MAX_SUBJECT_LENGTH) {
-      throw InvalidInputException.subject(bookingDto.getSubject().length());
-    }
-    if (bookingDto.getDescription().length() > Booking.MAX_DESCRIPTION_LENGTH) {
-      throw InvalidInputException.description(bookingDto.getDescription().length());
-    }
   }
 
   /**
@@ -135,14 +119,16 @@ public class BookingService {
    * @throws NotFoundException if booking with the specified id is not found
    */
   public BookingDto updateBooking(Long id, BookingDto bookingDto) {
-    validate(bookingDto);
+    PeriodValidator.validate(bookingDto);
+    bookingValidator.validateTextFieldsLength(bookingDto);
+
     Booking booking = bookingRepository.findById(id)
         .orElseThrow(() -> NotFoundException.booking(id));
 
     Booking newBooking = BookingMapper.mapToEntity(bookingDto,
         booking.getInterviewerSlot(),
         booking.getCandidateSlot());
-    BookingValidator.validate(newBooking);
+    bookingValidator.validateSlotOverlapping(newBooking);
 
     booking.setFrom(bookingDto.getFrom());
     booking.setTo(bookingDto.getTo());
@@ -164,4 +150,5 @@ public class BookingService {
     bookingRepository.delete(booking);
     return BookingMapper.mapToDto(booking);
   }
+
 }
