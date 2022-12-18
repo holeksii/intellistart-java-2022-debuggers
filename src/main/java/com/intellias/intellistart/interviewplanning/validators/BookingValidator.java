@@ -29,14 +29,14 @@ public class BookingValidator {
       Booking booking,
       InterviewerTimeSlot interviewerTimeSlot,
       CandidateTimeSlot candidateTimeSlot) {
-    if (!(booking.getFrom().isAfter(interviewerTimeSlot.getFrom())
-        || booking.getFrom().equals(interviewerTimeSlot.getFrom())
-        && booking.getFrom().isAfter(candidateTimeSlot.getFrom())
-        || booking.getFrom().equals(candidateTimeSlot.getFrom())
-        && booking.getTo().isBefore(interviewerTimeSlot.getTo())
-        || booking.getTo().equals(interviewerTimeSlot.getTo())
-        && booking.getTo().isBefore(candidateTimeSlot.getTo())
-        || booking.getTo().equals(candidateTimeSlot.getTo()))) {
+    if (!((booking.getFrom().isAfter(interviewerTimeSlot.getFrom())
+        || booking.getFrom().equals(interviewerTimeSlot.getFrom()))
+        && (booking.getFrom().isAfter(candidateTimeSlot.getFrom())
+        || booking.getFrom().equals(candidateTimeSlot.getFrom()))
+        && (booking.getTo().isBefore(interviewerTimeSlot.getTo())
+        || booking.getTo().equals(interviewerTimeSlot.getTo()))
+        && (booking.getTo().isBefore(candidateTimeSlot.getTo())
+        || booking.getTo().equals(candidateTimeSlot.getTo())))) {
       throw new ApplicationErrorException(ErrorCode.INVALID_BOUNDARIES,
           "booking time boundaries not overlapping with slots boundaries");
     }
@@ -46,7 +46,7 @@ public class BookingValidator {
    * Validate text fields length. Max subject length is 255. Max description length is 4000.
    *
    * @param booking booking
-   * @throws InvalidInputException if subject or booking length is bigger than max value.
+   * @throws InvalidInputException if subject or description length is bigger than max value.
    */
   public void validateTextFieldsLength(Booking booking) {
     if (booking.getSubject().length() > MAX_SUBJECT_LENGTH) {
