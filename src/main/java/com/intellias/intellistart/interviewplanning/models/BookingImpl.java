@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
@@ -22,6 +23,7 @@ import org.hibernate.Hibernate;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity(name = "booking")
 public class BookingImpl implements Booking {
 
@@ -61,9 +63,6 @@ public class BookingImpl implements Booking {
     this.interviewerSlot = interviewerSlot;
     this.subject = subject;
     this.description = description;
-  }
-
-  public BookingImpl() {
   }
 
   @JsonGetter("from")
