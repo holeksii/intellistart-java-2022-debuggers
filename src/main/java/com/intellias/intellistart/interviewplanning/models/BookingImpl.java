@@ -2,7 +2,7 @@ package com.intellias.intellistart.interviewplanning.models;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.intellias.intellistart.interviewplanning.models.interfaces.TimeSlot;
+import com.intellias.intellistart.interviewplanning.models.interfaces.Booking;
 import com.intellias.intellistart.interviewplanning.utils.Utils;
 import java.time.LocalTime;
 import java.util.Objects;
@@ -20,10 +20,10 @@ import org.hibernate.Hibernate;
 /**
  * Booking.
  */
-@Entity
 @Getter
 @Setter
-public class Booking implements TimeSlot {
+@Entity(name = "booking")
+public class BookingImpl implements Booking {
 
   @Id
   @SequenceGenerator(name = "booking_seq", sequenceName = "booking_sequence", allocationSize = 5)
@@ -38,12 +38,10 @@ public class Booking implements TimeSlot {
   private String description;
   @ManyToOne
   @JsonIgnore
-  private CandidateTimeSlot candidateSlot;
+  private CandidateTimeSlotImpl candidateSlot;
   @ManyToOne
   @JsonIgnore
-  private InterviewerTimeSlot interviewerSlot;
-  public static final int MAX_SUBJECT_LENGTH = 255;
-  public static final int MAX_DESCRIPTION_LENGTH = 4000;
+  private InterviewerTimeSlotImpl interviewerSlot;
 
   /**
    * Constructor.
@@ -55,8 +53,8 @@ public class Booking implements TimeSlot {
    * @param subject         subject
    * @param description     description of this booking
    */
-  public Booking(LocalTime from, LocalTime to, CandidateTimeSlot candidateSlot,
-      InterviewerTimeSlot interviewerSlot, String subject, String description) {
+  public BookingImpl(LocalTime from, LocalTime to, CandidateTimeSlotImpl candidateSlot,
+      InterviewerTimeSlotImpl interviewerSlot, String subject, String description) {
     this.from = from;
     this.to = to;
     this.candidateSlot = candidateSlot;
@@ -65,7 +63,7 @@ public class Booking implements TimeSlot {
     this.description = description;
   }
 
-  public Booking() {
+  public BookingImpl() {
   }
 
   @JsonGetter("from")
@@ -86,7 +84,7 @@ public class Booking implements TimeSlot {
     if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
       return false;
     }
-    Booking booking = (Booking) o;
+    BookingImpl booking = (BookingImpl) o;
     return id != null && Objects.equals(id, booking.id);
   }
 
